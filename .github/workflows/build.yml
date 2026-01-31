@@ -1,0 +1,30 @@
+name: Build LG G6 Unlock Generator
+
+on: 
+  workflow_dispatch: # Allows you to run it manually
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 8
+        uses: actions/setup-java@v4
+        with:
+          java-version: '8'
+          distribution: 'temurin'
+
+      - name: Build with Root
+        run: |
+          mkdir -p build/classes
+          javac -d build/classes src/*.java
+          echo "Main-Class: MyGUI" > manifest.txt
+          jar cvfm lg-g6-unlock-gen.jar manifest.txt -C build/classes .
+
+      - name: Upload Result
+        uses: actions/upload-artifact@v4
+        with:
+          name: unlock-generator-jar
+          path: lg-g6-unlock-gen.jar
